@@ -1,14 +1,21 @@
 ---
-- name: Install and Enable Nginx on Ubuntu Target Server
+- name: Install and Enable Nginx on Target Server
   hosts: webservers
   become: yes
 
   tasks:
-    - name: Install Nginx Package
+    - name: Install Nginx on Ubuntu
       ansible.builtin.apt:
         name: nginx
         state: present
         update_cache: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Nginx on CentOS
+      ansible.builtin.dnf:
+        name: nginx
+        state: present
+      when: ansible_os_family == 'RedHat'
 
     - name: Ensure Nginx is started and enabled
       ansible.builtin.service:
