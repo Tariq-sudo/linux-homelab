@@ -1,38 +1,14 @@
-Role Name
-=========
+cat > README.md << 'EOF'
+# Ansible Nginx Installation Role
 
-A brief description of the role goes here.
+A professional, cross-platform Ansible role for installing and configuring Nginx on Ubuntu and CentOS systems.
 
-Requirements
-------------
+## 🚀 Features
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- ✅ **Multi-OS Support**: Works on Ubuntu (Debian) and CentOS/RHEL (RedHat)
+- ✅ **Template-based Configuration**: Deploy custom `index.html` using Jinja2 templates
+- ✅ **Handler System**: Smart restart only when configuration changes
+- ✅ **Variable-driven**: Customize paths, package names, and server names
+- ✅ **Production-ready**: Follows Ansible best practices and role structure
 
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## 📁 Project Structure
