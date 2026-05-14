@@ -5,4 +5,4 @@
   become: yes
  
   roles:
-   - install_nginx_role
+   - deploy_nginx_role
