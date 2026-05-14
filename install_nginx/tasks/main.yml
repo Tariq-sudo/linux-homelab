@@ -1,0 +1,27 @@
+---
+# tasks file for install_nginx
+
+- name: Install Nginx
+  ansible.builtin.package:
+    name: "{{ nginx_package_name }}"
+    state: present
+
+- name: Deploy custom index.html on Debian
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ nginx_index_path_debian }}"
+  when: ansible_facts['os_family'] == 'Debian'
+  notify: Restart nginx
+
+- name: Deploy custom index.html on RedHat
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ nginx_index_path_redhat }}"
+  when: ansible_facts['os_family'] == 'RedHat'
+  notify: Restart nginx
+
+- name: Ensure Nginx is started and enabled
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: started
+    enabled: yes

@@ -1,0 +1,7 @@
+---
+# handlers file for install_nginx
+
+- name: Restart nginx
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: restarted

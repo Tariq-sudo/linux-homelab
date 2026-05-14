@@ -1,0 +1,8 @@
+---
+
+- name: Install and Enable Nginx on Target Server
+  hosts: webservers
+  become: yes
+ 
+  roles:
+   - install_nginx

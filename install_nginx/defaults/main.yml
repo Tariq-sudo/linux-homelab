@@ -1,0 +1,8 @@
+---
+# defaults file for install_nginx
+
+nginx_package_name: nginx
+nginx_service_name: nginx
+nginx_index_path_debian: /var/www/html/index.html
+nginx_index_path_redhat: /usr/share/nginx/html/index.html
+nginx_server_name: My DevOps Lab
