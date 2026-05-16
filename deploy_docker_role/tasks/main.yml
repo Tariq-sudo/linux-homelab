@@ -1,0 +1,40 @@
+---
+
+- name: Install Docker Dependencies
+  ansible.builtin.package:
+    name:
+      - curl
+      - gnupg
+    state: present
+
+- name: Install Docker Engine
+  ansible.builtin.package:
+    name: docker.io
+    state: present
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install Docker Engine (CentOS)
+  ansible.builtin.package:
+    name: docker
+    state: present
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Ensure Docker is started and enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ensure Python Docker module is installed
+  ansible.builtin.package:
+    name: python3-docker
+    state: present
+
+- name: Pull and Run Web Container
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: "{{ container_image }}"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "{{ host_port }}:{{ container_port }}"
