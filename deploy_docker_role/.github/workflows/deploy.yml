@@ -1,25 +1,11 @@
-name: CI/CD Docker Deployment
+name: CI CD Test
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+  test-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.TARGET_IP_UBUNTU }} >> ~/.ssh/known_hosts
-          ssh-keyscan -H ${{ secrets.TARGET_IP_CENTOS }} >> ~/.ssh/known_hosts
-
-      - name: Run Ansible Playbook
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: False
-        run: |
-          ansible-playbook -i inventory.ini deploy_containers.yml --extra-vars "ansible_ssh_private_key_file=~/.ssh/id_rsa"
+      - name: Hello World
+        run: echo "The pipeline is working!"
