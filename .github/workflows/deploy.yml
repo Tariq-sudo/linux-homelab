@@ -1,15 +1,30 @@
-      - name: Run Ansible Playbook
+name: CI CD Docker Deployment
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup and Run Ansible
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
+          # 1. Prepare SSH directory
           mkdir -p ~/.ssh
-          # Use quotes around the secret to handle multi-line keys
+          
+          # 2. Setup the Private Key from Secrets
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # Only run keyscan if the secrets are not empty
-          if [ -n "${{ secrets.IP_UBUNTU }}" ]; then ssh-keyscan -H ${{ secrets.IP_UBUNTU }} >> ~/.ssh/known_hosts; fi
-          if [ -n "${{ secrets.IP_CENTOS }}" ]; then ssh-keyscan -H ${{ secrets.IP_CENTOS }} >> ~/.ssh/known_hosts; fi
+          # 3. Scan the host keys to avoid hanging
+          ssh-keyscan -H ${{ secrets.IP_UBUNTU }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.IP_CENTOS }} >> ~/.ssh/known_hosts
           
-          # Execute with more verbose output to see errors
-          ansible-playbook -i inventory.ini deploy_containers.yml --private-key ~/.ssh/id_rsa -vv
+          # 4. Run the Playbook
+          ansible-playbook -i inventory.ini deploy_containers.yml --private-key ~/.ssh/id_rsa
