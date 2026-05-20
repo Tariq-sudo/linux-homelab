@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4 to remove Node warnings
 
       - name: Setup and Run Ansible
         env:
@@ -18,13 +18,21 @@ jobs:
           # 1. Prepare SSH directory
           mkdir -p ~/.ssh
           
-          # 2. Setup the Private Key from Secrets
+          # 2. Check if secrets exist before using them
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then echo "❌ SSH_PRIVATE_KEY is missing!"; exit 1; fi
+          if [ -z "${{ secrets.IP_UBUNTU }}" ]; then echo "❌ IP_UBUNTU is missing!"; exit 1; fi
+          if [ -z "${{ secrets.IP_CENTOS }}" ]; then echo "❌ IP_CENTOS is missing!"; exit 1; fi
+
+          # 3. Setup the Private Key
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # 3. Scan the host keys to avoid hanging
+          # 4. Scan the host keys
           ssh-keyscan -H ${{ secrets.IP_UBUNTU }} >> ~/.ssh/known_hosts
           ssh-keyscan -H ${{ secrets.IP_CENTOS }} >> ~/.ssh/known_hosts
           
-          # 4. Run the Playbook
+          # 5. Check if playbook and inventory exist
+          if [ ! -f "deploy_containers.yml" ]; then echo "❌ deploy_containers.yml not found in root!"; ls -R; exit 1; fi
+          
+          # 6. Run the Playbook
           ansible-playbook -i inventory.ini deploy_containers.yml --private-key ~/.ssh/id_rsa
