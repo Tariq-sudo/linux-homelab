@@ -1,0 +1,24 @@
+name: CI CD Docker Deployment
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Add servers to known_hosts to avoid hanging
+          ssh-keyscan -H ${{ secrets.IP_UBUNTU }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.IP_CENTOS }} >> ~/.ssh/known_hosts
+          # Execute
+          ansible-playbook -i inventory.ini deploy_containers.yml --private-key ~/.ssh/id_rsa

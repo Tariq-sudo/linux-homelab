@@ -1,0 +1,6 @@
+---
+- name: Deploy Dockerized Web Infrastructure
+  hosts: webservers
+  become: yes
+  roles:
+    - deploy_docker

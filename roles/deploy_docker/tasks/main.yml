@@ -1,0 +1,56 @@
+---
+# 1. Install Docker Engine
+- name: Install Docker on Ubuntu
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Setup Docker Repo for CentOS
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Install Docker on CentOS
+  ansible.builtin.dnf:
+    name: [docker-ce, docker-ce-cli, containerd.io]
+    state: present
+    nobest: true
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Start Docker Service
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
+
+# 2. Install Python SDK (Needed for Ansible to control Docker)
+- name: Install Python Docker SDK (Ubuntu)
+  ansible.builtin.apt:
+    name: python3-docker
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install Python Docker SDK (CentOS via Pip)
+  block:
+    - name: Install Pip
+      ansible.builtin.dnf:
+        name: python3-pip
+        state: present
+    - name: Install Docker SDK via Pip
+      ansible.builtin.pip:
+        name: docker
+        state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+# 3. Deploy Container
+- name: Pull and Run Nginx Container
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: "{{ container_image }}"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "{{ http_port }}:80"

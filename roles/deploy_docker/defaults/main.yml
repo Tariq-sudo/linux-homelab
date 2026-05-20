@@ -1,0 +1,4 @@
+---
+container_name: devops_web_app
+container_image: nginx:latest
+http_port: 8080
