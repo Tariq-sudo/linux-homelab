@@ -11,5 +11,6 @@
         state: started
         restart_policy: always
         pull: true
+        recreate: true
         ports:
           - "80:80"
