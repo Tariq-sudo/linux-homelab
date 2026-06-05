@@ -1,6 +1,10 @@
 ---
-- name: Deploy Dockerized Web Infrastructure
-  hosts: webservers
-  become: yes
-  roles:
-    - deploy_docker
+
+- name: Pull and Run Nginx Container
+  community.docker.docker_container:
+    name: nginx-web
+    image: "{{ docker_image }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "80:80"
