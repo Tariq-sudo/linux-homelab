@@ -2,4 +2,8 @@
 *.tmp
 *.bak
 .vault_pass.txt
-.vault_pass.txt
+
+# Generated monitoring configs (contain secrets — managed by Ansible)
+project-monitoring-stack/monitoring/alertmanager/
+project-monitoring-stack/monitoring/prometheus/
+project-monitoring-stack/monitoring/docker-compose.yml
