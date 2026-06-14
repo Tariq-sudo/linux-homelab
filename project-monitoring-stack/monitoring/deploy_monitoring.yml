@@ -1,0 +1,60 @@
+---
+
+- name: Deploy Prometheus + Grafana + Alertmanager Monitoring Stack
+  hosts: localhost
+  connection: local
+
+  vars_files:
+    - vars/monitoring_vars.yml
+    - vars/vault.yml
+
+  tasks:
+    - name: Create monitoring directory structure
+      file:
+        path: "{{ monitoring_dir }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - prometheus
+        - grafana
+        - alertmanager
+
+    - name: Deploy Prometheus configuration
+      template:
+        src: templates/prometheus.yml.j2
+        dest: "{{ monitoring_dir }}/prometheus/prometheus.yml"
+      notify: Reload Prometheus
+
+    - name: Deploy Prometheus alert rules
+      template:
+        src: templates/alert_rules.yml.j2
+        dest: "{{ monitoring_dir }}/prometheus/alert_rules.yml"
+      notify: Reload Prometheus
+
+    - name: Deploy Alertmanager configuration
+      template:
+        src: templates/alertmanager.yml.j2
+        dest: "{{ monitoring_dir }}/alertmanager/alertmanager.yml"
+      notify: Restart Alertmanager
+
+    - name: Deploy Docker Compose file
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: "{{ monitoring_dir }}/docker-compose.yml"
+
+    - name: Start / update monitoring stack
+      ansible.builtin.shell: docker compose up -d
+      args:
+        chdir: "{{ monitoring_dir }}"
+
+  handlers:
+    - name: Reload Prometheus
+      ansible.builtin.uri:
+        url: "http://localhost:9090/-/reload"
+        method: POST
+        status_code: 200
+
+    - name: Restart Alertmanager
+      ansible.builtin.shell: docker compose restart alertmanager
+      args:
+        chdir: "{{ monitoring_dir }}"
