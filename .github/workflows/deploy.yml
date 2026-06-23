@@ -55,7 +55,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 192.168.18.36 >> ~/.ssh/known_hosts
-          ssh-keyscan -H 192.168.18.35 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 192.168.18.11 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 192.168.18.12 >> ~/.ssh/known_hosts
           ansible-playbook -i inventory.ini deploy_containers.yml \
             --extra-vars "docker_image=${{ secrets.DOCKERHUB_USERNAME }}/nginx-demo:${IMAGE_TAG}"
