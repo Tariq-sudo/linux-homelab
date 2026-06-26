@@ -49,7 +49,7 @@ project-monitoring-stack/
 ├── install_node_exporter.yml      # installs Node Exporter on target servers
 ├── vars/
 │   ├── monitoring_vars.yml        # plain config (IPs, ports, Grafana credentials)
-│   └── vault.yml                  # 🔒 AES-256 encrypted Gmail credentials
+│   └── vault.yml                  # AES-256 encrypted Gmail credentials
 └── templates/
     ├── prometheus.yml.j2          # Prometheus config (Jinja2 template)
     ├── alert_rules.yml.j2         # PromQL alert rules (Jinja2 template)
