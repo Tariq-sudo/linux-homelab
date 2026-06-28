@@ -1,0 +1,40 @@
+---
+- name: Deploy Nginx App on Kubernetes Cluster
+  hosts: control_node
+  become: yes
+  connection: local
+
+  tasks:
+    - name: Apply ConfigMap
+      shell: kubectl apply -f /home/labadmin/k3s-project/manifests/configmap.yml
+      register: configmap_result
+
+    - name: Apply Nginx Deployment and Service
+      shell: kubectl apply -f /home/labadmin/k3s-project/manifests/nginx-deployment.yml
+      register: deployment_result
+
+    - name: Wait for rollout to complete
+      shell: kubectl rollout status deployment/nginx-web --timeout=120s
+      register: rollout_result
+
+    - name: Show pod status
+      shell: kubectl get pods -o wide
+      register: pods_output
+
+    - name: Show service status
+      shell: kubectl get service nginx-web-service
+      register: service_output
+
+    - name: Print deployment summary
+      debug:
+        msg:
+          - "=== Deployment Results ==="
+          - "{{ deployment_result.stdout }}"
+          - "=== Pod Status ==="
+          - "{{ pods_output.stdout_lines }}"
+          - "=== Service ==="
+          - "{{ service_output.stdout_lines }}"
+          - "=== App URLs ==="
+          - "http://192.168.18.10:30080"
+          - "http://192.168.18.11:30080"
+          - "http://192.168.18.12:30080"

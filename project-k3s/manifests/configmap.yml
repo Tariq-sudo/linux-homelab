@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head><title>Tariq's K3s Cluster</title></head>
+      <body>
+        <h1>Running on Kubernetes!</h1>
+        <p>Deployed via K3s across 3 nodes</p>
+        <p>Master: ubuntu01 (192.168.18.10)</p>
+        <p>Workers: tariq-vm + centos-worker</p>
+      </body>
+    </html>
